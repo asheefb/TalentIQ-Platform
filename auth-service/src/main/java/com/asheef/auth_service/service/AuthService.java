@@ -1,9 +1,13 @@
 package com.asheef.auth_service.service;
 
 import com.asheef.auth_service.model.dto.LoginRequest;
-import com.asheef.user_service.util.ResponseDto;
-import org.springframework.http.ResponseEntity;
+import com.asheef.auth_service.model.dto.RegisterRequest;
+import com.asheef.auth_service.model.response.LoginResponse;
 
 public interface AuthService {
-    ResponseEntity<ResponseDto> login(LoginRequest loginRequest);
+
+    LoginResponse login(LoginRequest loginRequest);
+
+    void register(RegisterRequest registerRequest);
+
 }

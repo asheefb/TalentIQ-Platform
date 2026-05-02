@@ -1,50 +1,77 @@
 package com.asheef.auth_service.service.impl;
 
 
+import com.asheef.auth_service.client.UserServiceClient;
 import com.asheef.auth_service.config.JwtUtil;
+import com.asheef.auth_service.model.dto.RegisterRequest;
+import com.asheef.auth_service.model.response.LoginResponse;
+import com.asheef.auth_service.model.response.UserCredentialDto;
 import com.asheef.auth_service.service.AuthService;
 
 import com.asheef.auth_service.model.dto.LoginRequest;
-import com.asheef.user_service.util.ResponseDto;
+
 import com.asheef.auth_service.constants.Constant;
-import com.asheef.user_service.entity.User;
-import com.asheef.user_service.repository.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.NoSuchElementException;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    private final UserRepository userRepository;
+    private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
 
+    private final UserServiceClient userServiceClient;
     private final PasswordEncoder passwordEncoder;
-
     private final JwtUtil jwtUtil;
 
-    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
-        this.userRepository = userRepository;
+    public AuthServiceImpl(UserServiceClient userServiceClient,
+                           PasswordEncoder passwordEncoder,
+                           JwtUtil jwtUtil) {
+        this.userServiceClient = userServiceClient;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
     }
 
     @Override
-    public ResponseEntity<ResponseDto> login(LoginRequest loginRequest) {
+    public LoginResponse login(LoginRequest request) {
+        log.info("Login attempt for email={}", request.getEmail());
 
-        User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new NoSuchElementException(Constant.USER_NOT_FOUND));
-
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException(Constant.INVALID_PASSWORD);
+        UserCredentialDto user;
+        try {
+            user = userServiceClient.findByEmail(request.getEmail());
+        } catch (java.util.NoSuchElementException e) {
+            // Uniform error to prevent user-enumeration.
+            log.warn("Login failed (unknown user) email={}", request.getEmail());
+            throw new IllegalArgumentException(Constant.INVALID_CREDENTIALS);
         }
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+        if (Boolean.FALSE.equals(user.getIsActive())) {
+            log.warn("Login denied for deactivated account email={}", request.getEmail());
+            throw new IllegalStateException(Constant.ACCOUNT_DEACTIVATED);
+        }
 
-        return ResponseEntity.ok(
-                new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), token, Constant.LOGIN_SUCCESS)
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            log.warn("Login failed (bad password) email={}", request.getEmail());
+            throw new IllegalArgumentException(Constant.INVALID_CREDENTIALS);
+        }
+
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
+        log.info("Login success email={} role={}", user.getEmail(), user.getRole());
+
+        return new LoginResponse(
+                token,
+                "Bearer",
+                jwtUtil.getExpirationSeconds(),
+                user.getEmail(),
+                user.getRole()
         );
     }
+
+    @Override
+    public void register(RegisterRequest request) {
+        log.info("Register request email={}", request.getEmail());
+        userServiceClient.register(request);
+    }
+
 }
