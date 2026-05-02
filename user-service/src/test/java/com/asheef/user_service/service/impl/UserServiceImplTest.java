@@ -104,7 +104,7 @@ class UserServiceImplTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
         assertFalse(response.getBody().getSuccess());
-        assertTrue(response.getBody().getMessage().contains(Constant.USER_ALREADY_EXIST));
+        assertTrue(response.getBody().getMessage().contains(Constant.USER_ALREADY_EXISTS));
         verify(userRepository, never()).save(any(User.class));
     }
 
@@ -118,7 +118,7 @@ class UserServiceImplTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
         assertFalse(response.getBody().getSuccess());
-        assertTrue(response.getBody().getMessage().contains(Constant.USER_ALREADY_EXIST));
+        assertTrue(response.getBody().getMessage().contains(Constant.USER_ALREADY_EXISTS));
         verify(userRepository, never()).save(any(User.class));
     }
 
@@ -292,7 +292,7 @@ class UserServiceImplTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertFalse(response.getBody().getSuccess());
-        assertTrue(response.getBody().getMessage().contains(Constant.USER_ALREADY_EXIST));
+        assertTrue(response.getBody().getMessage().contains(Constant.USER_ALREADY_EXISTS));
         verify(userRepository, never()).save(any(User.class));
     }
 

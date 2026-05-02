@@ -1,5 +1,6 @@
 package com.asheef.user_service.controller;
 
+import com.asheef.user_service.entity.User;
 import com.asheef.user_service.model.dto.UpdateUserDto;
 import com.asheef.user_service.model.dto.UserRequestDto;
 import com.asheef.user_service.model.dto.UsersDto;
@@ -18,6 +19,12 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
+    @GetMapping("/email/{email}")
+    public User getUserByEmail(@PathVariable String email) {
+        return userService.getUserByEmail(email);
+    }
+
 
     @PostMapping
     public ResponseEntity<ResponseDto> createUser(@Valid @RequestBody UserRequestDto dto) {
