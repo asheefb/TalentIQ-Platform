@@ -21,7 +21,7 @@ spring:
           uri: ${USER_SERVICE_URI:http://localhost:8081}
           predicates:
             - Path=/users/**
-          filters:
+          filter:
              - JwtAuthGateway
 
         - id: auth-service
