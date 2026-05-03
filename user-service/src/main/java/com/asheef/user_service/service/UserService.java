@@ -1,5 +1,6 @@
 package com.asheef.user_service.service;
 
+import com.asheef.user_service.entity.User;
 import com.asheef.user_service.model.dto.UpdateUserDto;
 import com.asheef.user_service.model.dto.UserRequestDto;
 import com.asheef.user_service.model.dto.UsersDto;
@@ -16,4 +17,6 @@ public interface UserService {
     ResponseEntity<ResponseDto> updateUser(Integer id,UpdateUserDto dto);
 
     ResponseEntity<ResponseDto> deleteUser(Integer id);
+
+    User getUserByEmail(String email);
 }

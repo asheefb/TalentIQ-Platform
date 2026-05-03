@@ -13,6 +13,10 @@ import com.asheef.user_service.repository.specifications.UserSpecification;
 import com.asheef.user_service.service.AsyncService;
 import com.asheef.user_service.service.UserService;
 import com.asheef.user_service.util.ResponseDto;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -26,10 +30,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
-import java.util.logging.Logger;
+import java.util.Objects;
+
 
 @Service
 public class UserServiceImpl implements UserService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
 
@@ -39,9 +46,10 @@ public class UserServiceImpl implements UserService {
 
     private final AsyncService asyncService;
 
-    private static final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
-
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, AsyncService asyncService) {
+    public UserServiceImpl(UserRepository userRepository,
+                           UserMapper userMapper,
+                           PasswordEncoder passwordEncoder,
+                           AsyncService asyncService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
@@ -56,19 +64,24 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByMobile(mobile).isPresent();
     }
 
-    @CacheEvict(value = "users", allEntries = true)
     @Override
+    @Transactional
+    @CacheEvict(value = "users", allEntries = true)
     public ResponseEntity<ResponseDto> createUser(UserRequestDto dto) {
 
-        if (isUserExistWithEmail(dto.getEmail())) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            log.info("Reject createUser — email already exists: {}", dto.getEmail());
             return ResponseEntity.badRequest().body(
-                    new ResponseDto(Boolean.FALSE, HttpStatus.BAD_REQUEST.value(), Constant.USER_ALREADY_EXIST + " with email " + dto.getEmail())
+                    new ResponseDto(Boolean.FALSE, HttpStatus.BAD_REQUEST.value(),
+                            Constant.USER_ALREADY_EXISTS + " with email " + dto.getEmail())
             );
         }
 
-        if (isUserExistWithMobile(dto.getMobile())) {
+        if (userRepository.existsByMobile(dto.getMobile())) {
+            log.info("Reject createUser — mobile already exists: {}", dto.getMobile());
             return ResponseEntity.badRequest().body(
-                    new ResponseDto(Boolean.FALSE, HttpStatus.BAD_REQUEST.value(), Constant.USER_ALREADY_EXIST + " with mobile " + dto.getMobile())
+                    new ResponseDto(Boolean.FALSE, HttpStatus.BAD_REQUEST.value(),
+                            Constant.USER_ALREADY_EXISTS + " with mobile " + dto.getMobile())
             );
         }
 
@@ -82,45 +95,49 @@ public class UserServiceImpl implements UserService {
         user.setRole(Role.USER);
 
         userRepository.save(user);
-        log.info("User created successfully with id " + user.getId());
+        log.info("User created successfully with id {}", user.getId());
         asyncService.sendWelcomeEmail(dto.getEmail());
         return ResponseEntity.ok(
                 new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), Constant.USER_ADDED_SUCCESS)
         );
     }
 
+    @Override
     @Cacheable(
             value = "users",
             key = "T(java.util.Objects).hash(#request.pageNo, #request.pageSize, #request.isActive, #request.search, #request.fieldName, #request.sortBy, #request.direction)"
     )
-    @Override
     public ResponseEntity<ResponseDto> getUsers(UsersDto request) {
+        log.info("DB hit -> getUsers(pageNo={}, pageSize={}, isActive={}, search={}, field={}, sortBy={}, dir={})",
+                request.getPageNo(), request.getPageSize(), request.getIsActive(),
+                request.getSearch(), request.getFieldName(),
+                request.safeSortBy(), request.getDirection());
 
         log.info("🔥 Fetching users from DATABASE");
 
-        Specification<User> spec = (root, query, cb) -> cb.conjunction();
+        Specification<User> spec = Specification
+                .where(UserSpecification.isActive(request.getIsActive()))
+                .and(UserSpecification.search(request.getSearch(), request.getFieldName()));
 
-        spec = spec.and(UserSpecification.isActive(request.getIsActive()));
-
-        if (request.getSearch() != null && !request.getSearch().isEmpty())
-            spec = spec.and(UserSpecification.getSearch(request.getSearch(), request.getFieldName()));
-
-        Sort sort = request.getDirection().equalsIgnoreCase("desc")
-                ? Sort.by(request.getSortBy()).descending()
-                : Sort.by(request.getSortBy()).ascending();
+        Sort sort = "desc" .equalsIgnoreCase(request.getDirection())
+                ? Sort.by(request.safeSortBy()).descending()
+                : Sort.by(request.safeSortBy()).ascending();
 
         Pageable pageable = PageRequest.of(request.getPageNo(), request.getPageSize(), sort);
-
         Page<User> users = userRepository.findAll(spec, pageable);
-        Page<UserResponseDto> map = users.map(userMapper::toDto);
+        Page<UserResponseDto> mapped = users.map(userMapper::toDto);
 
         return ResponseEntity.ok(
-                new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), map, Constant.SUCCESS)
+                new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), mapped, Constant.SUCCESS)
         );
     }
 
-    @CacheEvict(value = "users", allEntries = true)
     @Override
+    @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "users", allEntries = true),
+            @CacheEvict(value = "user", key = "#userId")
+    })
     public ResponseEntity<ResponseDto> changeUserStatus(Integer userId, Boolean isActive) {
 
         if (isActive == null) {
@@ -131,12 +148,12 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException(Constant.USER_NOT_FOUND));
-        String msg = "";
-        if (user.getIsActive() != isActive) {
-            msg = isActive ? Constant.ACTIVATED : Constant.DEACTIVATED;
-            user.setIsActive(isActive);
 
+        if (!Objects.equals(user.getIsActive(), isActive)) {
+            user.setIsActive(isActive);
             userRepository.save(user);
+            String msg = isActive ? Constant.ACTIVATED : Constant.DEACTIVATED;
+            log.info("User id={} status -> {}", userId, msg);
             return ResponseEntity.ok(
                     new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), msg + " " + Constant.SUCCESS + "fully")
             );
@@ -147,26 +164,31 @@ public class UserServiceImpl implements UserService {
         );
     }
 
-    @CacheEvict(value = "users", allEntries = true)
     @Override
+    @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "users", allEntries = true),
+            @CacheEvict(value = "user", key = "#userId")
+    })
     public ResponseEntity<ResponseDto> updateUser(Integer userId, UpdateUserDto dto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException((Constant.USER_NOT_FOUND)));
 
-        if (!user.getName().equals(dto.getName())) {
+        if (dto.getName() != null && !Objects.equals(user.getName(), dto.getName())) {
             user.setName(dto.getName());
         }
 
-        if (!user.getMobile().equals(dto.getMobile())) {
-            if (isUserExistWithMobile(dto.getMobile())) {
+        if (dto.getMobile() != null && !Objects.equals(user.getMobile(), dto.getMobile())) {
+            if (userRepository.existsByMobile(dto.getMobile())) {
                 return ResponseEntity.badRequest().body(
-                        new ResponseDto(Boolean.FALSE, HttpStatus.BAD_REQUEST.value(), Constant.USER_ALREADY_EXIST + " with mobile " + dto.getMobile())
+                        new ResponseDto(Boolean.FALSE, HttpStatus.BAD_REQUEST.value(),
+                                Constant.USER_ALREADY_EXISTS + " with mobile " + dto.getMobile())
                 );
             }
             user.setMobile(dto.getMobile());
         }
 
-        if (user.getAddress() == null || !user.getAddress().equals(dto.getAddress())) {
+        if (!Objects.equals(user.getAddress(), dto.getAddress())) {
             user.setAddress(dto.getAddress());
         }
 
@@ -177,8 +199,12 @@ public class UserServiceImpl implements UserService {
         );
     }
 
-    @CacheEvict(value = "users", allEntries = true)
     @Override
+    @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "users", allEntries = true),
+            @CacheEvict(value = "user", key = "#id")
+    })
     public ResponseEntity<ResponseDto> deleteUser(Integer id) {
 
         User user = userRepository.findById(id)
@@ -189,5 +215,11 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok().body(
                 new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), Constant.SUCCESS)
         );
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
