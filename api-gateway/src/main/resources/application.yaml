@@ -29,6 +29,11 @@ spring:
           predicates:
             - Path=/auth/**
 
+        - id: resume-analyzer-service
+          uri: ${RESUME_ANALYZER_SERVICE_URI:http://localhost:8083}
+          predicates:
+            - Path=/resume-analyzer/**
+
 jwt:
   secret: ${JWT_SECRET:defaultSecretKeyForDevelopmentOnlyPleaseChangeInProduction1234567890}
   # Endpoints that should NEVER require JWT even if the route has the filter (belt-and-braces).
