@@ -1,11 +1,11 @@
 package com.asheef.user_service.controller;
 
+import com.asheef.common.utils.ResponseDto;
 import com.asheef.user_service.entity.User;
 import com.asheef.user_service.model.dto.UpdateUserDto;
 import com.asheef.user_service.model.dto.UserRequestDto;
 import com.asheef.user_service.model.dto.UsersDto;
 import com.asheef.user_service.service.UserService;
-import com.asheef.user_service.util.ResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

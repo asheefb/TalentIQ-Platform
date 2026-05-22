@@ -1,5 +1,6 @@
 package com.asheef.user_service.service.impl;
 
+import com.asheef.common.utils.ResponseDto;
 import com.asheef.user_service.constants.Constant;
 import com.asheef.user_service.entity.User;
 import com.asheef.user_service.mapper.UserMapper;
@@ -8,7 +9,6 @@ import com.asheef.user_service.model.dto.UserRequestDto;
 import com.asheef.user_service.model.dto.UsersDto;
 import com.asheef.user_service.model.response.UserResponseDto;
 import com.asheef.user_service.repository.UserRepository;
-import com.asheef.user_service.util.ResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

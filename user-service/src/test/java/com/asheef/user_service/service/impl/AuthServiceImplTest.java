@@ -5,7 +5,6 @@ import com.asheef.user_service.constants.Constant;
 import com.asheef.user_service.entity.User;
 import com.asheef.user_service.enums.Role;
 import com.asheef.user_service.repository.UserRepository;
-import com.asheef.user_service.util.ResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

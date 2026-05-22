@@ -19,6 +19,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
+        <module name="common" />
+        <module name="resume-analyzer-service" />
       </profile>
       <profile name="Annotation profile for auth-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -41,6 +43,8 @@
       <module name="auth-service" options="-parameters" />
       <module name="auth-service.main" options="-parameters" />
       <module name="auth-service.test" options="-parameters" />
+      <module name="common" options="-parameters" />
+      <module name="resume-analyzer-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>
   </component>

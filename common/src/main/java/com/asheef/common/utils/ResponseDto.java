@@ -1,4 +1,4 @@
-package com.asheef.user_service.util;
+package com.asheef.common.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

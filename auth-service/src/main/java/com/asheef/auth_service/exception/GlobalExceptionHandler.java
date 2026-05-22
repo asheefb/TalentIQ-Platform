@@ -1,6 +1,6 @@
 package com.asheef.auth_service.exception;
 
-import com.asheef.auth_service.util.ResponseDto;
+import com.asheef.common.utils.ResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
