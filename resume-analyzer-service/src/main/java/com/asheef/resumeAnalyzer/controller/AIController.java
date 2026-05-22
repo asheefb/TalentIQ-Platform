@@ -1,5 +1,6 @@
 package com.asheef.resumeAnalyzer.controller;
 
+import com.asheef.resumeAnalyzer.dto.AiSummaryResponse;
 import com.asheef.resumeAnalyzer.service.AiService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +19,7 @@ public class AIController {
     }
 
     @PostMapping("/summarize-user/{id}")
-    public ResponseEntity<String> summarize(@PathVariable Long id) {
+    public ResponseEntity<AiSummaryResponse> summarize(@PathVariable Integer id) {
         return ResponseEntity.ok(aiService.summarizeUser(id));
     }
 }

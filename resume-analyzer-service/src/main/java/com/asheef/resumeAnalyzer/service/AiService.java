@@ -1,7 +1,9 @@
 package com.asheef.resumeAnalyzer.service;
 
+import com.asheef.resumeAnalyzer.dto.AiSummaryResponse;
 import org.jspecify.annotations.Nullable;
 
 public interface AiService {
-    @Nullable String summarizeUser(Long id);
+
+    AiSummaryResponse summarizeUser(Integer id);
 }
