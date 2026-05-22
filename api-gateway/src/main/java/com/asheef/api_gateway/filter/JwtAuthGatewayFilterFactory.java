@@ -1,4 +1,4 @@
-package com.asheef.api_gateway.filters;
+package com.asheef.api_gateway.filter;
 
 import com.asheef.api_gateway.config.JwtUtil;
 import io.jsonwebtoken.Claims;

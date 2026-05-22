@@ -5,7 +5,7 @@ import com.asheef.auth_service.model.dto.LoginRequest;
 import com.asheef.auth_service.model.dto.RegisterRequest;
 import com.asheef.auth_service.model.response.LoginResponse;
 import com.asheef.auth_service.service.AuthService;
-import com.asheef.auth_service.util.ResponseDto;
+import com.asheef.common.utils.ResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,5 @@
-package com.asheef.auth_service.util;
+package com.asheef.common.utils;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
