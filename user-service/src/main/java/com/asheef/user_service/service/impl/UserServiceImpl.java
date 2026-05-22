@@ -1,5 +1,6 @@
 package com.asheef.user_service.service.impl;
 
+import com.asheef.common.utils.ResponseDto;
 import com.asheef.user_service.constants.Constant;
 import com.asheef.user_service.enums.Role;
 import com.asheef.user_service.mapper.UserMapper;
@@ -12,7 +13,6 @@ import com.asheef.user_service.repository.UserRepository;
 import com.asheef.user_service.repository.specifications.UserSpecification;
 import com.asheef.user_service.service.AsyncService;
 import com.asheef.user_service.service.UserService;
-import com.asheef.user_service.util.ResponseDto;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;

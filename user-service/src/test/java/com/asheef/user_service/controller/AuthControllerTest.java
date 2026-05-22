@@ -1,7 +1,6 @@
 package com.asheef.user_service.controller;
 
 import com.asheef.user_service.exception.GlobalExceptionHandler;
-import com.asheef.user_service.util.ResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

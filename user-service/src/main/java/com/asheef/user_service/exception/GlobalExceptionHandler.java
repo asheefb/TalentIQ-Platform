@@ -1,8 +1,8 @@
 package com.asheef.user_service.exception;
 
+import com.asheef.common.utils.ErrorStructure;
+import com.asheef.common.utils.ResponseDto;
 import com.asheef.user_service.constants.Constant;
-import com.asheef.user_service.util.ErrorStructure;
-import com.asheef.user_service.util.ResponseDto;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;

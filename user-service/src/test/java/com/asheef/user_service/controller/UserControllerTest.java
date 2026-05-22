@@ -5,7 +5,6 @@ import com.asheef.user_service.model.dto.UpdateUserDto;
 import com.asheef.user_service.model.dto.UserRequestDto;
 import com.asheef.user_service.model.dto.UsersDto;
 import com.asheef.user_service.service.UserService;
-import com.asheef.user_service.util.ResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
