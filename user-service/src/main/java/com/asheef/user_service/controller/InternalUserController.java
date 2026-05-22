@@ -78,6 +78,24 @@ public class InternalUserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UserProfileView> getUser(@PathVariable Integer id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException(Constant.USER_NOT_FOUND));
+
+        return ResponseEntity.ok(
+                new UserProfileView(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getMobile(),
+                        user.getAddress(),
+                        user.getRole().name()
+                )
+        );
+    }
+
     /**
      * Lightweight record for internal response — no entity leakage.
      */
@@ -87,6 +105,16 @@ public class InternalUserController {
             String password,
             String role,
             Boolean isActive
+    ) {
+    }
+
+    public record UserProfileView(
+            Integer id,
+            String name,
+            String email,
+            String mobile,
+            String address,
+            String role
     ) {
     }
 }

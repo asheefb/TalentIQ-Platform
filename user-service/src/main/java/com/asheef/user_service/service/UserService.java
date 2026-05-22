@@ -19,4 +19,6 @@ public interface UserService {
     ResponseEntity<ResponseDto> deleteUser(Integer id);
 
     User getUserByEmail(String email);
+
+    User getUser(Integer id);
 }
