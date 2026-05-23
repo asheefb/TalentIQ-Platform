@@ -25,6 +25,11 @@ public class UserController {
         return userService.getUserByEmail(email);
     }
 
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Integer id) {
+        return userService.getUser(id);
+    }
+
 
     @PostMapping
     public ResponseEntity<ResponseDto> createUser(@Valid @RequestBody UserRequestDto dto) {

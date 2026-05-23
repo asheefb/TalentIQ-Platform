@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
                 .where(UserSpecification.isActive(request.getIsActive()))
                 .and(UserSpecification.search(request.getSearch(), request.getFieldName()));
 
-        Sort sort = "desc" .equalsIgnoreCase(request.getDirection())
+        Sort sort = "desc".equalsIgnoreCase(request.getDirection())
                 ? Sort.by(request.safeSortBy()).descending()
                 : Sort.by(request.safeSortBy()).ascending();
 
@@ -220,6 +220,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException(Constant.USER_NOT_FOUND));
+    }
+
+    @Override
+    public User getUser(Integer id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(Constant.USER_NOT_FOUND));
     }
 }
