@@ -1,6 +1,7 @@
 package com.asheef.resumeAnalyzer.client;
 
 import com.asheef.resumeAnalyzer.dto.OpenAiRequest;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,7 +16,7 @@ public class OpenAiClient {
     @Value("${openai.api.key}")
     private String apiKey;
 
-    public OpenAiClient(WebClient webClient) {
+    public OpenAiClient(@Qualifier("openAiWebClient") WebClient webClient) {
         this.webClient = webClient;
     }
 

@@ -9,7 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class WebClientConfig {
 
 
-    @Value("${user-service.url}")
+    @Value("${user.service.url}")
     private String userServiceUrl;
 
     @Bean
