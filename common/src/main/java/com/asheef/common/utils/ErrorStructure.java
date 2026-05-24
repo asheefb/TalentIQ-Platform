@@ -17,4 +17,6 @@ public class ErrorStructure {
 
     private String field;
 
+
+
 }

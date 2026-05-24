@@ -25,4 +25,12 @@ public class WebClientConfig {
                 .baseUrl("https://api.openai.com/v1")
                 .build();
     }
+
+    @Bean
+    public WebClient huggingFaceWebClient() {
+
+        return WebClient.builder()
+                .baseUrl("https://api-inference.huggingface.co/models")
+                .build();
+    }
 }

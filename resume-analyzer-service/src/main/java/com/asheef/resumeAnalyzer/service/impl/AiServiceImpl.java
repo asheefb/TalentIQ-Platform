@@ -6,6 +6,8 @@ import com.asheef.resumeAnalyzer.dto.AiSummaryResponse;
 import com.asheef.resumeAnalyzer.dto.OpenAiRequest;
 import com.asheef.resumeAnalyzer.dto.UserDto;
 import com.asheef.resumeAnalyzer.service.AiService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 @Service
 public class AiServiceImpl implements AiService {
 
+    private static final Logger log = LoggerFactory.getLogger(AiServiceImpl.class);
     private final UserServiceClient userServiceClient;
 
     private final OpenAiClient openAiClient;
@@ -55,7 +58,11 @@ public class AiServiceImpl implements AiService {
                 List.of(new OpenAiRequest.Message("user", prompt))
         );
 
-        String response = openAiClient.summarize(request);
+//        String response = openAiClient.summarize(request);
+
+        String response =
+
+        log.info("AI summary: {}", response);
 
         return new AiSummaryResponse(response);
     }
