@@ -33,4 +33,11 @@ public class WebClientConfig {
                 .baseUrl("https://api-inference.huggingface.co/models")
                 .build();
     }
+
+    @Bean
+    public WebClient groqWebClient() {
+        return WebClient.builder()
+                .baseUrl("https://api.groq.com/openai/v1")
+                .build();
+    }
 }

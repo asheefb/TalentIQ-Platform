@@ -1,5 +1,7 @@
 package com.asheef.resumeAnalyzer.service.impl;
 
+import com.asheef.resumeAnalyzer.client.GroqClient;
+import com.asheef.resumeAnalyzer.client.HuggingFaceClient;
 import com.asheef.resumeAnalyzer.client.OpenAiClient;
 import com.asheef.resumeAnalyzer.client.UserServiceClient;
 import com.asheef.resumeAnalyzer.dto.AiSummaryResponse;
@@ -20,10 +22,16 @@ public class AiServiceImpl implements AiService {
 
     private final OpenAiClient openAiClient;
 
+    private final HuggingFaceClient huggingFaceClient;
 
-    public AiServiceImpl(UserServiceClient userServiceClient, OpenAiClient openAiClient) {
+    private final GroqClient groqClient;
+
+
+    public AiServiceImpl(UserServiceClient userServiceClient, OpenAiClient openAiClient, HuggingFaceClient huggingFaceClient, GroqClient groqClient) {
         this.userServiceClient = userServiceClient;
         this.openAiClient = openAiClient;
+        this.huggingFaceClient = huggingFaceClient;
+        this.groqClient = groqClient;
     }
 
     @Override
@@ -53,14 +61,21 @@ public class AiServiceImpl implements AiService {
                         user.getAddress()
                 );
 
+//        OpenAiRequest request = new OpenAiRequest(
+//                "gpt-3.5-turbo",
+//                List.of(new OpenAiRequest.Message("user", prompt))
+//        );
+//
+//        String response = openAiClient.summarize(request);
+
+//        String response = huggingFaceClient.summarize(prompt);
+
         OpenAiRequest request = new OpenAiRequest(
-                "gpt-3.5-turbo",
+                "llama-3.1-8b-instant",
                 List.of(new OpenAiRequest.Message("user", prompt))
         );
 
-//        String response = openAiClient.summarize(request);
-
-        String response =
+        String response = groqClient.summarize(request);
 
         log.info("AI summary: {}", response);
 

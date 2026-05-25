@@ -12,16 +12,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-
 @Component
-public class OpenAiClient {
+public class GroqClient {
+
+    @Value("${groq.api.key}")
+    private String apiKey;
 
     private final WebClient webClient;
 
-    @Value("${openai.api.key}")
-    private String apiKey;
-
-    public OpenAiClient(@Qualifier("openAiWebClient") WebClient webClient) {
+    public GroqClient(@Qualifier("groqWebClient") WebClient webClient) {
         this.webClient = webClient;
     }
 
@@ -52,15 +51,6 @@ public class OpenAiClient {
             throw new AiServiceException("Error from OpenAI: " + e.getResponseBodyAsString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-//    public String summarize(OpenAiRequest request) {
-//
-//        return webClient.post()
-//                .uri("/chat/completions")
-//                .header(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .bodyValue(request)
-//                .retrieve()
-//                .bodyToMono(String.class)
-//                .block();
-//    }
+
+
 }
