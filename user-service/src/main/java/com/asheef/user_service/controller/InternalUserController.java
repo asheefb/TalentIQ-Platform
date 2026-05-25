@@ -84,6 +84,10 @@ public class InternalUserController {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(Constant.USER_NOT_FOUND));
 
+        log.info("Internal getUser OK id={}", id);
+
+        log.info("full user={}", user);
+
         return ResponseEntity.ok(
                 new UserProfileView(
                         user.getId(),
