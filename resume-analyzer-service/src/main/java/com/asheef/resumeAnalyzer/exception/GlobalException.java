@@ -1,6 +1,8 @@
 package com.asheef.resumeAnalyzer.exception;
 
 import com.asheef.common.utils.ResponseDto;
+import com.asheef.resumeAnalyzer.constants.Constant;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,7 +17,14 @@ public class GlobalException {
     ) {
 
         return ResponseEntity
-                .status(HttpStatus.TOO_MANY_REQUESTS)
-                .body(new ResponseDto(Boolean.FALSE, HttpStatus.TOO_MANY_REQUESTS.value(), e.getMessage()));
+                .status(HttpStatus.valueOf(e.getStatus().value()))
+                .body(new ResponseDto(Boolean.FALSE, e.getStatus().value(), e.getMessage()));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ResponseDto> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                new ResponseDto(Boolean.FALSE, HttpStatus.CONFLICT.value(), ex.getMessage())
+        );
     }
 }

@@ -40,4 +40,13 @@ public class WebClientConfig {
                 .baseUrl("https://api.groq.com/openai/v1")
                 .build();
     }
+
+    @Bean
+    public WebClient geminiWebClient() {
+        return WebClient.builder()
+                .baseUrl("https://generativelanguage.googleapis.com")
+                .build();
+    }
+
+
 }

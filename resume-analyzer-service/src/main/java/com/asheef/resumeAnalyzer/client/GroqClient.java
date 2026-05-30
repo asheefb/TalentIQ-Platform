@@ -13,6 +13,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+/*
+This one only is for chat completion
+Groq supports certain chat/completion models like:
+ */
+
 @Component
 public class GroqClient {
 
@@ -52,6 +57,15 @@ public class GroqClient {
             throw new AiServiceException("Error from OpenAI: " + e.getResponseBodyAsString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public String chat(){
+        return "";
+    }
+
+    public String askQuestion(){
+        return "";
+    }
+
 
 
     public String generateEmbedding(String chunk) {

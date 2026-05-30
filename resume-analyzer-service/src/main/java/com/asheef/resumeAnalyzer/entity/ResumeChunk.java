@@ -15,14 +15,15 @@ import lombok.Setter;
 @Table(name = "resume_chunk")
 public class ResumeChunk {
 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private Integer userId;
 
-    @Column(length = 5000)
+    @Column(nullable = false, length = 5000)
     private String content;
 
-    @Column(length = 10000)
+    @Column(columnDefinition = "LONGTEXT")
     private String embedding;
 }
