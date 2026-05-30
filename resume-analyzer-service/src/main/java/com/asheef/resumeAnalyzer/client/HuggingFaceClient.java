@@ -20,19 +20,12 @@ public class HuggingFaceClient {
     @Value("${huggingface.api.key}")
     private String apiKey;
 
-
-
     private final WebClient webClient;
 
     private static final Logger log = LoggerFactory.getLogger(HuggingFaceClient.class);
 
     public HuggingFaceClient(@Qualifier("huggingFaceWebClient") WebClient webClient) {
         this.webClient = webClient;
-    }
-
-    @PostConstruct
-    public void test() {
-        System.out.println("Api key: "+apiKey);
     }
 
     public String summarize(String prompt) {

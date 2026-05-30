@@ -1,7 +1,6 @@
 package com.asheef.resumeAnalyzer.service.impl;
 
 import com.asheef.resumeAnalyzer.client.GeminiEmbeddingClient;
-import com.asheef.resumeAnalyzer.client.GroqClient;
 import com.asheef.resumeAnalyzer.dto.ResumeUploadRequest;
 import com.asheef.resumeAnalyzer.entity.ResumeChunk;
 import com.asheef.resumeAnalyzer.repository.ResumeChunkRepository;
@@ -33,6 +32,7 @@ public class ResumeServiceImpl implements ResumeService {
         List<String> chunks = chunkText(request.getResumeContent());
 
         chunks.forEach(chunk -> {
+
             String embedding = geminiEmbeddingClient.generateEmbedding(chunk);
 
             ResumeChunk resumeChunk = new ResumeChunk();

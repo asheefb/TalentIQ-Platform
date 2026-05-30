@@ -1,7 +1,6 @@
 package com.asheef.resumeAnalyzer.exception;
 
 import com.asheef.common.utils.ResponseDto;
-import com.asheef.resumeAnalyzer.constants.Constant;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

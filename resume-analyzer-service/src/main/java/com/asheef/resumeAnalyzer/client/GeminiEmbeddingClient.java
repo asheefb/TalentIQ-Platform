@@ -5,15 +5,12 @@ import com.asheef.resumeAnalyzer.dto.EmbeddingRequest;
 import com.asheef.resumeAnalyzer.exception.AiServiceException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class GeminiEmbeddingClient {
@@ -34,22 +31,16 @@ public class GeminiEmbeddingClient {
     public String generateEmbedding(String text) {
 
         try {
+            EmbeddingRequest request = new EmbeddingRequest("gemini-embedding-001",
+                    new EmbeddingRequest.Content(
+                            List.of(new EmbeddingRequest.Part(text))
+                    ));
             return webClient.post()
                     .uri(uriBuilder -> uriBuilder
                             .path("/v1beta/models/gemini-embedding-001:embedContent")
                             .queryParam("key", apiKey)
                             .build())
-                    .bodyValue(
-                            Map.of(
-                                    "model", "models/gemini-embedding-001",
-                                    "content", Map.of(
-                                            "parts",
-                                            List.of(
-                                                    Map.of("text", text)
-                                            )
-                                    )
-                            )
-                    )
+                    .bodyValue(request)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();

@@ -1,7 +1,6 @@
 package com.asheef.resumeAnalyzer.client;
 
 import com.asheef.resumeAnalyzer.constants.Constant;
-import com.asheef.resumeAnalyzer.dto.EmbeddingRequest;
 import com.asheef.resumeAnalyzer.dto.OpenAiRequest;
 import com.asheef.resumeAnalyzer.exception.AiServiceException;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,7 +53,7 @@ public class GroqClient {
                 throw new AiServiceException(Constant.RATE_LIMIT_EXCEEDED, HttpStatus.TOO_MANY_REQUESTS);
             }
 
-            throw new AiServiceException("Error from OpenAI: " + e.getResponseBodyAsString(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AiServiceException("Error from Groq: " + e.getResponseBodyAsString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -64,32 +63,5 @@ public class GroqClient {
 
     public String askQuestion(){
         return "";
-    }
-
-
-
-    public String generateEmbedding(String chunk) {
-        try {
-            EmbeddingRequest embeddingRequest = new EmbeddingRequest(chunk,
-                    "text-embedding-004"); //text-embedding-3-small
-
-            String response = webClient.post()
-                    .uri("/embeddings")
-                    .header(HttpHeaders.AUTHORIZATION, Constant.BEARER_PREFIX + apiKey)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(embeddingRequest)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
-
-            return response;
-        } catch (WebClientResponseException e) {
-
-            if (e.getStatusCode().value() == HttpStatus.TOO_MANY_REQUESTS.value()) {
-                throw new AiServiceException(Constant.RATE_LIMIT_EXCEEDED, HttpStatus.TOO_MANY_REQUESTS);
-            }
-
-            throw new AiServiceException("Error from Groq: " + e.getResponseBodyAsString(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 }

@@ -1,7 +1,6 @@
 package com.asheef.resumeAnalyzer.controller;
 
 import com.asheef.common.utils.ResponseDto;
-import com.asheef.resumeAnalyzer.client.GeminiEmbeddingClient;
 import com.asheef.resumeAnalyzer.dto.ResumeUploadRequest;
 import com.asheef.resumeAnalyzer.service.ResumeService;
 import org.springframework.beans.factory.annotation.Qualifier;
