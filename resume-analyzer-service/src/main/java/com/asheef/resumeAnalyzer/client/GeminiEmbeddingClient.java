@@ -59,8 +59,6 @@ public class GeminiEmbeddingClient {
             }
 
             throw new AiServiceException("Error from Gemini: " + e.getResponseBodyAsString(), HttpStatus.valueOf(e.getStatusCode().value()));
-        } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
