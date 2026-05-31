@@ -2,7 +2,11 @@ package com.asheef.resumeAnalyzer.client;
 
 import com.asheef.resumeAnalyzer.constants.Constant;
 import com.asheef.resumeAnalyzer.dto.EmbeddingRequest;
+import com.asheef.resumeAnalyzer.dto.response.EmbeddingResponse;
 import com.asheef.resumeAnalyzer.exception.AiServiceException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -28,14 +32,14 @@ public class GeminiEmbeddingClient {
         this.webClient = webClient;
     }
 
-    public String generateEmbedding(String text) {
+    public EmbeddingResponse generateEmbedding(String text) {
 
         try {
             EmbeddingRequest request = new EmbeddingRequest("gemini-embedding-001",
                     new EmbeddingRequest.Content(
                             List.of(new EmbeddingRequest.Part(text))
                     ));
-            return webClient.post()
+            String  response = webClient.post()
                     .uri(uriBuilder -> uriBuilder
                             .path("/v1beta/models/gemini-embedding-001:embedContent")
                             .queryParam("key", apiKey)
@@ -45,12 +49,23 @@ public class GeminiEmbeddingClient {
                     .bodyToMono(String.class)
                     .block();
 
+            System.out.println(response);
+            ObjectMapper mapper = new ObjectMapper();
+            EmbeddingResponse embeddingResponse = mapper.readValue(response, EmbeddingResponse.class);
+
+            System.out.println(embeddingResponse);
+            return embeddingResponse;
+
         } catch (WebClientResponseException e) {
             if (e.getStatusCode().value() == 429) {
                 throw new AiServiceException(Constant.RATE_LIMIT_EXCEEDED, HttpStatus.TOO_MANY_REQUESTS);
             }
 
             throw new AiServiceException("Error from Gemini: " + e.getResponseBodyAsString(), HttpStatus.valueOf(e.getStatusCode().value()));
+        } catch (JsonMappingException e) {
+            throw new RuntimeException(e);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 

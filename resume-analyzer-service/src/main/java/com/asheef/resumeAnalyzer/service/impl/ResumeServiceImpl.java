@@ -2,12 +2,17 @@ package com.asheef.resumeAnalyzer.service.impl;
 
 import com.asheef.resumeAnalyzer.client.GeminiEmbeddingClient;
 import com.asheef.resumeAnalyzer.dto.ResumeUploadRequest;
+import com.asheef.resumeAnalyzer.dto.response.EmbeddingResponse;
 import com.asheef.resumeAnalyzer.entity.ResumeChunk;
+import com.asheef.resumeAnalyzer.helper.Parser;
 import com.asheef.resumeAnalyzer.repository.ResumeChunkRepository;
 import com.asheef.resumeAnalyzer.service.ResumeService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,16 +34,24 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public void processResume(ResumeUploadRequest request) {
-        List<String> chunks = chunkText(request.getResumeContent());
+        String content = extractContent(request.getFile());
+        List<String> chunks = chunkText(content);
 
         chunks.forEach(chunk -> {
 
-            String embedding = geminiEmbeddingClient.generateEmbedding(chunk);
+            EmbeddingResponse embedding = geminiEmbeddingClient.generateEmbedding(chunk);
 
             ResumeChunk resumeChunk = new ResumeChunk();
             resumeChunk.setUserId(request.getUserId());
             resumeChunk.setContent(chunk);
-            resumeChunk.setEmbedding(embedding);
+            ObjectMapper mapper = new ObjectMapper();
+
+            try {
+                resumeChunk.setEmbedding(mapper.writeValueAsString(embedding.getEmbedding().getValues()));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+
             ResumeChunk saved = resumeChunkRepository.save(resumeChunk);
             log.info("Saved resume chunk: {}", saved);
 
@@ -47,14 +60,17 @@ public class ResumeServiceImpl implements ResumeService {
         });
     }
 
+    private String extractContent(MultipartFile file) {
+        return new Parser().extractText(file);
+    }
+
     private List<String> chunkText(String text) {
         int chunkSize = 500;
 
         List<String> chunks = new ArrayList<>();
 
         for (int i = 0; i < text.length(); i += chunkSize) {
-            chunks.add(
-                    text.substring(
+            chunks.add(text.substring(
                             i,
                             Math.min(i + chunkSize, text.length())
                     )
@@ -62,6 +78,4 @@ public class ResumeServiceImpl implements ResumeService {
         }
         return chunks;
     }
-
-
 }

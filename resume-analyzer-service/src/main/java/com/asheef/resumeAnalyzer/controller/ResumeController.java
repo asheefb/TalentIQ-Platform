@@ -6,6 +6,7 @@ import com.asheef.resumeAnalyzer.service.ResumeService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -21,13 +22,13 @@ public class ResumeController {
     @Value("${gemini.api.key}")
     private String apiKey;
 
-    public ResumeController(ResumeService resumeService,@Qualifier("geminiWebClient") WebClient webClient) {
+    public ResumeController(ResumeService resumeService, @Qualifier("geminiWebClient") WebClient webClient) {
         this.resumeService = resumeService;
         this.webClient = webClient;
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<ResponseDto> uploadResume(@RequestBody ResumeUploadRequest resumeUploadRequest) {
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseDto> uploadResume(@ModelAttribute ResumeUploadRequest resumeUploadRequest) {
         resumeService.processResume(resumeUploadRequest);
 
         return ResponseEntity.ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), "Resume uploaded successfully"));
