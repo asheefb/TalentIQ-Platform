@@ -49,12 +49,9 @@ public class GeminiEmbeddingClient {
                     .bodyToMono(String.class)
                     .block();
 
-            System.out.println(response);
             ObjectMapper mapper = new ObjectMapper();
-            EmbeddingResponse embeddingResponse = mapper.readValue(response, EmbeddingResponse.class);
 
-            System.out.println(embeddingResponse);
-            return embeddingResponse;
+            return mapper.readValue(response, EmbeddingResponse.class);
 
         } catch (WebClientResponseException e) {
             if (e.getStatusCode().value() == 429) {
