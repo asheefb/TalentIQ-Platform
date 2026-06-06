@@ -4,6 +4,7 @@ import com.asheef.resumeAnalyzer.client.GroqClient;
 import com.asheef.resumeAnalyzer.client.HuggingFaceClient;
 import com.asheef.resumeAnalyzer.client.OpenAiClient;
 import com.asheef.resumeAnalyzer.client.UserServiceClient;
+import com.asheef.resumeAnalyzer.dto.AskQuestionRequest;
 import com.asheef.resumeAnalyzer.dto.response.AiSummaryResponse;
 import com.asheef.resumeAnalyzer.dto.OpenAiRequest;
 import com.asheef.resumeAnalyzer.dto.UserDto;
@@ -25,6 +26,8 @@ public class AiServiceImpl implements AiService {
     private final HuggingFaceClient huggingFaceClient;
 
     private final GroqClient groqClient;
+
+
 
 
     public AiServiceImpl(UserServiceClient userServiceClient, OpenAiClient openAiClient, HuggingFaceClient huggingFaceClient, GroqClient groqClient) {

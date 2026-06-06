@@ -1,8 +1,11 @@
 package com.asheef.resumeAnalyzer.controller;
 
 import com.asheef.common.utils.ResponseDto;
+import com.asheef.resumeAnalyzer.dto.AskQuestionRequest;
 import com.asheef.resumeAnalyzer.dto.ResumeUploadRequest;
+import com.asheef.resumeAnalyzer.dto.response.AiSummaryResponse;
 import com.asheef.resumeAnalyzer.service.ResumeService;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -45,5 +48,10 @@ public class ResumeController {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+    }
+
+    @PostMapping("/ask")
+    public ResponseEntity<String> askQuestion(@RequestBody AskQuestionRequest request) throws JSONException {
+        return ResponseEntity.ok(resumeService.askQuestion(request));
     }
 }

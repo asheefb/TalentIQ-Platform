@@ -1,12 +1,10 @@
 package com.asheef.resumeAnalyzer.controller;
 
+import com.asheef.resumeAnalyzer.dto.AskQuestionRequest;
 import com.asheef.resumeAnalyzer.dto.response.AiSummaryResponse;
 import com.asheef.resumeAnalyzer.service.AiService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/ai")
