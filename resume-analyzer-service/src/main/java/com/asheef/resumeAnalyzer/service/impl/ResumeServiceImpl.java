@@ -6,7 +6,6 @@ import com.asheef.resumeAnalyzer.dto.AskQuestionRequest;
 import com.asheef.resumeAnalyzer.dto.ChunkSimilarity;
 import com.asheef.resumeAnalyzer.dto.OpenAiRequest;
 import com.asheef.resumeAnalyzer.dto.ResumeUploadRequest;
-import com.asheef.resumeAnalyzer.dto.response.AiSummaryResponse;
 import com.asheef.resumeAnalyzer.dto.response.EmbeddingResponse;
 import com.asheef.resumeAnalyzer.entity.ResumeChunk;
 import com.asheef.resumeAnalyzer.helper.Parser;
