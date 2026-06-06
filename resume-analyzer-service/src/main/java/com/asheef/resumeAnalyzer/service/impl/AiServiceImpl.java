@@ -4,7 +4,7 @@ import com.asheef.resumeAnalyzer.client.GroqClient;
 import com.asheef.resumeAnalyzer.client.HuggingFaceClient;
 import com.asheef.resumeAnalyzer.client.OpenAiClient;
 import com.asheef.resumeAnalyzer.client.UserServiceClient;
-import com.asheef.resumeAnalyzer.dto.AiSummaryResponse;
+import com.asheef.resumeAnalyzer.dto.response.AiSummaryResponse;
 import com.asheef.resumeAnalyzer.dto.OpenAiRequest;
 import com.asheef.resumeAnalyzer.dto.UserDto;
 import com.asheef.resumeAnalyzer.service.AiService;

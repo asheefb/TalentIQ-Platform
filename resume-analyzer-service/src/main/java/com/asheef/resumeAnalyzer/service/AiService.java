@@ -1,6 +1,6 @@
 package com.asheef.resumeAnalyzer.service;
 
-import com.asheef.resumeAnalyzer.dto.AiSummaryResponse;
+import com.asheef.resumeAnalyzer.dto.response.AiSummaryResponse;
 
 public interface AiService {
 

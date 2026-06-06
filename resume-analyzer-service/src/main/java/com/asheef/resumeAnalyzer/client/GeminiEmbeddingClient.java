@@ -5,7 +5,6 @@ import com.asheef.resumeAnalyzer.dto.EmbeddingRequest;
 import com.asheef.resumeAnalyzer.dto.response.EmbeddingResponse;
 import com.asheef.resumeAnalyzer.exception.AiServiceException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

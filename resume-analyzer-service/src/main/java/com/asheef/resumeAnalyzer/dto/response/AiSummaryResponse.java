@@ -1,4 +1,4 @@
-package com.asheef.resumeAnalyzer.dto;
+package com.asheef.resumeAnalyzer.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

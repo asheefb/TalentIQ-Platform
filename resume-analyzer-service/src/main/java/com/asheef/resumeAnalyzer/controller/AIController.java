@@ -1,6 +1,6 @@
 package com.asheef.resumeAnalyzer.controller;
 
-import com.asheef.resumeAnalyzer.dto.AiSummaryResponse;
+import com.asheef.resumeAnalyzer.dto.response.AiSummaryResponse;
 import com.asheef.resumeAnalyzer.service.AiService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
